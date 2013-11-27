@@ -64,5 +64,3 @@ class UploadController extends Controller
         return $resp;        
     }
 }
-
-?>
