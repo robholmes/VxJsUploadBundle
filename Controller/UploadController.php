@@ -4,6 +4,7 @@ namespace Vx\JsUploadBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Vx\JsUploadBundle\Uploader\CustomUploadHandler as UploadHandler;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 
 class UploadController extends Controller
@@ -24,13 +25,12 @@ class UploadController extends Controller
         $options = $this->getUploadOptions($profile);
 
         if ($options == false)
-            return new Response('Erreur profile: ' . $profile . ' doesn\'t existe');
+            return new Response('Error: ' . $profile . ' doesn\'t exist');
 
         $options['filename'] = $filename;
 
         $handler = new UploadHandler($this->generateUrl('vx_js_delete', array('profile' => $profile)), $options);
-        $resp = new Response(json_encode($handler->post(false)));
-        $resp->headers->set('content-type', 'application-json');
+        $resp = new JsonResponse($handler->post(false));
 
         return $resp;
     }
@@ -40,11 +40,10 @@ class UploadController extends Controller
         $options = $this->getUploadOptions($profile);
 
         if ($options == false)
-            return new Response('Erreur profile');
+            return new Response('Error profile');
 
         $handler = new UploadHandler($this->generateUrl('vx_js_delete', array('profile' => $profile)), $options);
-        $resp = new Response(json_encode($handler->get(false)));
-        $resp->headers->set('content-type', 'application-json');
+        $resp = new JsonResponse($handler->get(false));
 
         return $resp;
     }
@@ -53,13 +52,12 @@ class UploadController extends Controller
     {
         $options = $this->getUploadOptions($profile);
         if ($options == false)
-            return new Response('Erreur: '.$profile.' doesn\'t exists');
+            return new Response('Error: '.$profile.' doesn\'t exist');
 
         $options['filename'] = $filename;
 
         $handler = new UploadHandler(null, $options);
-        $resp = new Response(json_encode($handler->delete(false)));
-        $resp->headers->set('content-type', 'application-json');
+        $resp = new JsonResponse($handler->delete(false));
 
         return $resp;        
     }
