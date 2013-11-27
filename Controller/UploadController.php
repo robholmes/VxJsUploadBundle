@@ -29,10 +29,20 @@ class UploadController extends Controller
 
         $options['filename'] = $filename;
 
-        $handler = new UploadHandler($this->generateUrl('vx_js_delete', array('profile' => $profile)), $options);
-        $resp = new JsonResponse($handler->post(false));
+        $callbackService = null;
+        if (isset($options['callback_service'])) {
+            $callbackService = $options['callback_service'];
+            unset($options['callback_service']);
+        }
 
-        return $resp;
+        $handler = new UploadHandler($this->generateUrl('vx_js_delete', array('profile' => $profile)), $options);
+        $rawResponse = $handler->post(false);
+
+        if ($callbackService && $this->has($callbackService)) {
+            $this->get($callbackService)->afterUpload($profile, $options, $rawResponse);
+        }
+
+        return new JsonResponse($rawResponse);
     }
 
     public function getAction($profile)
